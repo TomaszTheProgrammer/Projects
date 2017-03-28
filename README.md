@@ -1,2 +1,3 @@
 # Projects
-Learning new technologies
+Current projects:
+* PhoneBook (C# + database, probably SQL Server)
