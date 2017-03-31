@@ -49,5 +49,17 @@ namespace ClassLibrary
         {
             data.Contacts.Remove(contact);
         }
+
+        ///<summary>Connects to database</summary>
+        public void Connect()   
+        {
+            data.connection.Open();
+        }
+
+        ///<summary>DIsconnects from database</summary>
+        public void Disconnect()
+        {
+            data.connection.Close();
+        }
     }
 }

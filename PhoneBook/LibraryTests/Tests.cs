@@ -22,18 +22,20 @@ namespace LibraryTests
         private string zipCode = "ZipCode";
         private string mNumber = "601602603";
         private string sNumber = "426010011";
+        private string server = "LAPTOP-TOMASZ\\SQLEXPRESS";
+        private string database = "PhoneBook";
 
         [TestInitialize]
         public void Startup()
         {
-            DC = new DataContext();
+            DC = new DataContext(server, database);
             DM = new DataManagement(DC);
             DS = new DataService(DM);
-            person = new Person(name, surname);
             location = new Location(city, zipCode);
+            person = new Person(name, surname, location);
             stationaryNumber = new StationaryPhoneNumber(sNumber);
             mobileNumber = new MobilePhoneNumber(mNumber);
-            contact = new Contact(person, location, mobileNumber);
+            contact = new Contact(person, mobileNumber);
         }
 
         [TestCleanup]
@@ -78,5 +80,21 @@ namespace LibraryTests
             Assert.AreEqual(false, DC.People.ContainsKey(person.UUID));
             Assert.AreEqual(0, DC.Contacts.Count);
         }
+
+        [TestMethod]
+        public void DeletePhoneNumber()
+        {
+            DM.Delete(mobileNumber);
+            Assert.AreEqual(0, DC.Numbers.Count);
+        }
+
+        [TestMethod]
+        public void DeleteContact()
+        {
+            DM.Delete(contact);
+            Assert.AreEqual(0, DC.Contacts.Count);
+        }
+
+
     }
 }

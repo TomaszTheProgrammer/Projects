@@ -11,7 +11,16 @@ namespace Program
     {
         static void Main(string[] args)
         {
-            Contact c = new Contact(new Person("Tomasz", "Smolarek"), new Location("Lodz", "91-035"), new MobilePhoneNumber("607890726"));
+            string server = ".\\SQLEXPRESS";
+            string database = "PhoneBook";
+            DataManagement DM = new DataManagement(new DataContext(server, database));
+            DM.Connect();
+            Location l = new Location("Lodz", "00-000");
+            Person p = new Person("Tomasz", "Smolarek", l);
+            PhoneNumber n = new MobilePhoneNumber("607890726");
+            Contact c = new Contact(p, n);
+
+            DM.Disconnect();
         }
     }
 }
