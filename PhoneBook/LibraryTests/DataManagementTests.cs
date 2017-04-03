@@ -5,7 +5,7 @@ using ClassLibrary;
 namespace LibraryTests
 {
     [TestClass]
-    public class Tests
+    public class DataManagementTests
     {
         private DataContext DC;
         private DataManagement DM;

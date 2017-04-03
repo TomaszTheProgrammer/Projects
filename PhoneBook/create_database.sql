@@ -2,17 +2,20 @@
 
 --CREATE DATABASE PhoneBook;
 --GO
---CREATE TABLE PhoneBook.dbo.People(
---name		VARCHAR(20), 
---surname		VARCHAR(20), 
---id			VARCHAR(36),
---CONSTRAINT people_primary_key PRIMARY KEY (id)
---);
---GO
 --CREATE TABLE PhoneBook.dbo.Locations(
 --id			INT,
 --city		VARCHAR(20),
 --zipcode		VARCHAR(20),
+--CONSTRAINT location_primary_key PRIMARY KEY (id)
+--);
+--GO
+--CREATE TABLE PhoneBook.dbo.People(
+--name		VARCHAR(20), 
+--surname		VARCHAR(20), 
+--id			VARCHAR(36),
+--id_location INT,
+--CONSTRAINT people_primary_key PRIMARY KEY (id),
+--CONSTRAINT foreign_key_location FOREIGN KEY (id_location) REFERENCES PhoneBook.dbo.Locations (id)
 --);
 --GO
 --CREATE TABLE PhoneBook.dbo.Numbers(

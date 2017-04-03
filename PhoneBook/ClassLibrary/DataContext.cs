@@ -12,7 +12,8 @@ namespace ClassLibrary
         public Dictionary<Guid, Person> People;
         public List<PhoneNumber> Numbers;
         public List<Contact> Contacts;
-        public SqlConnection connection;
+        public SqlConnection connection { get; private set; }
+        
 
         public DataContext(string server, string database)
         {
