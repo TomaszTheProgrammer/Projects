@@ -10,12 +10,14 @@ namespace ClassLibrary
     public class DataManagement
     {
         public DataContext data;
-        
+        private string server;
+
         public DataManagement(DataContext data)
         {
             if (data != null)
             {
                 this.data = data;
+                this.server = data.connection.Database;
             }
             else throw new NullReferenceException(data.GetType().ToString() + " is null");
         }
@@ -52,7 +54,7 @@ namespace ClassLibrary
         }
 
         ///<summary>Connects to database</summary>
-        public void Connect()   
+        public void Connect()
         {
             data.connection.Open();
         }
@@ -61,12 +63,12 @@ namespace ClassLibrary
         public void Disconnect()
         {
             data.connection.Close();
-            
+
         }
 
         public void ConstraintOff(String table)
         {
-            SqlCommand command = new SqlCommand("ALTER TABLE " + table +" NOCHECK CONSTRAINT ALL", data.connection);
+            SqlCommand command = new SqlCommand("ALTER TABLE " + table + " NOCHECK CONSTRAINT ALL", data.connection);
             Connect();
             command.ExecuteNonQuery();
             Disconnect();
@@ -82,38 +84,44 @@ namespace ClassLibrary
 
         public void InsertTuple(Person p)
         {
-            SqlCommand commandLocation = new SqlCommand("INSERT INTO PhoneBook.dbo.Locations" + "(id, city, zipcode) " + "VALUES(@id, @city, @zipcode)", data.connection);
-            commandLocation.Parameters.Add("@id", System.Data.SqlDbType.Int).Value = p.Location.Id;
-            commandLocation.Parameters.Add("@city", System.Data.SqlDbType.VarChar, 20).Value = p.Location.City;
-            commandLocation.Parameters.Add("@zipcode", System.Data.SqlDbType.VarChar, 20).Value = p.Location.ZipCode;
+            SqlCommand commandCheck = new SqlCommand("SELECT COUNT(id) FROM " + server + ".dbo.Locations WHERE id=" + p.Location.Id, data.connection);
 
-            SqlCommand commandPerson = new SqlCommand("INSERT INTO PhoneBook.dbo.People" + "(name, surname, id, id_location) " + "VALUES(@name, @surname, @id, @id_location)", data.connection);
+            SqlCommand commandPerson = new SqlCommand("INSERT INTO " + server + ".dbo.People" + "(name, surname, id, id_location) " + "VALUES(@name, @surname, @id, @id_location)", data.connection);
             commandPerson.Parameters.Add("@name", System.Data.SqlDbType.VarChar, 20).Value = p.Name;
             commandPerson.Parameters.Add("@surname", System.Data.SqlDbType.VarChar, 20).Value = p.Surname;
             commandPerson.Parameters.Add("@id", System.Data.SqlDbType.VarChar, 36).Value = p.UUID.ToString();
             commandPerson.Parameters.Add("@id_location", System.Data.SqlDbType.Int).Value = p.Location.Id;
 
             Connect();
-            commandLocation.ExecuteNonQuery();
+            int flag = (int)commandCheck.ExecuteScalar();
+            if (flag == 0) addLocation(p);
             commandPerson.ExecuteNonQuery();
             Disconnect();
         }
 
+        private void addLocation(Person p)
+        {
+            SqlCommand commandLocation = new SqlCommand("INSERT INTO " + server + ".dbo.Locations" + "(id, city, zipcode) " + "VALUES(@id, @city, @zipcode)", data.connection);
+            commandLocation.Parameters.Add("@id", System.Data.SqlDbType.Int).Value = p.Location.Id;
+            commandLocation.Parameters.Add("@city", System.Data.SqlDbType.VarChar, 20).Value = p.Location.City;
+            commandLocation.Parameters.Add("@zipcode", System.Data.SqlDbType.VarChar, 20).Value = p.Location.ZipCode;
+            commandLocation.ExecuteNonQuery();
+        }
+
         public void DeleteTuple(Person p)
         {
-            ConstraintOff("PhoneBook.dbo.People");
-            SqlCommand command = new SqlCommand("DELETE FROM PhoneBook.dbo.People WHERE name='" + p.Name+"' AND surname='" + p.Surname + "' AND id_location='" + p.Location.Id+"'", data.connection);
-            DeleteTuple(p.Location);
+            ConstraintOff(server + ".dbo.People");
+            SqlCommand command = new SqlCommand("DELETE FROM " + server + ".dbo.People WHERE id=@id", data.connection);
+            command.Parameters.Add("@id", System.Data.SqlDbType.VarChar, 36).Value = p.UUID.ToString();
             Connect();
             command.ExecuteNonQuery();
             Disconnect();
-            ConstraintOn("PhoneBook.dbo.People");
-
+            ConstraintOn(server + ".dbo.People");
         }
 
         public void DeleteTuple(Location l)
         {
-            SqlCommand command = new SqlCommand("DELETE FROM PhoneBook.dbo.Locations WHERE id='" + l.Id + "'", data.connection);
+            SqlCommand command = new SqlCommand("DELETE FROM " + server + ".dbo.Locations WHERE id='" + l.Id + "'", data.connection);
             Connect();
             command.ExecuteNonQuery();
             Disconnect();
@@ -122,11 +130,20 @@ namespace ClassLibrary
         public int CountRows(String tableName)
         {
             int count = 0;
-            SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM PhoneBook.dbo." + tableName, data.connection);
+            SqlCommand command = new SqlCommand("SELECT COUNT(*) FROM " + server + ".dbo." + tableName, data.connection);
             Connect();
             count = (int)command.ExecuteScalar();
             Disconnect();
             return count;
+        }
+
+        public int DoesExistPerson(Person p)
+        {
+            SqlCommand commandCheck = new SqlCommand("SELECT COUNT(id) FROM " + server + ".dbo.People WHERE id='" + p.UUID.ToString()+"'", data.connection);
+            Connect();
+            int flag = (int)commandCheck.ExecuteScalar();
+            Disconnect();
+            return flag;
         }
 
     }

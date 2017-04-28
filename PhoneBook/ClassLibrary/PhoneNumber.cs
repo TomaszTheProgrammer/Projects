@@ -8,7 +8,7 @@ namespace ClassLibrary
 {
     public abstract class PhoneNumber
     {
-        protected PhoneNumber() { }
+        
         protected string Number;
     }
 }

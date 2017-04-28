@@ -58,19 +58,14 @@ namespace LibraryTests
             }
 
             [TestMethod]
-            public void InsertTuple()
+            public void InsertAndDeleteTuple()
             {
                 DM.InsertTuple(person);
                 int p = DM.CountRows("People");
-                Assert.AreEqual(1, p);
-            }
-
-            [TestMethod]
-            public void DeleteTuple()
-            { 
+                Assert.AreEqual(1, DM.DoesExistPerson(person));
                 DM.DeleteTuple(person);
-                int p = DM.CountRows("People");
-                Assert.AreEqual(0, p);
+                Assert.AreEqual(0, DM.DoesExistPerson(person));
+
             }
         }
     }

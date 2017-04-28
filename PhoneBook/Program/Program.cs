@@ -20,9 +20,15 @@ namespace Program
             Person p2 = new Person("Learn", "C#", l2);
             PhoneNumber n = new MobilePhoneNumber("607890726");
             Contact c = new Contact(p, n);
-            //DM.InsertTuple(p);
-            //DM.InsertTuple(p2);
-            //DM.DeleteTuple(p2);
+
+            DM.InsertTuple(p);
+            Console.WriteLine(DM.DoesExistPerson(p));
+
+            System.Threading.Thread.Sleep(5000);
+
+            DM.DeleteTuple(p);
+            Console.WriteLine(DM.DoesExistPerson(p));
+
             int count = DM.CountRows("People");
             Console.WriteLine(count);
         }
