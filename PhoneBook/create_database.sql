@@ -19,18 +19,14 @@
 --);
 --GO
 --CREATE TABLE PhoneBook.dbo.Numbers(
---id			INT,
 --number		VARCHAR(20),
---CONSTRAINT numbers_primary_key PRIMARY KEY (id)
+--CONSTRAINT numbers_primary_key PRIMARY KEY (number)
 --);
 --GO
 --CREATE TABLE PhoneBook.dbo.Contacts(
 --id_person		VARCHAR(36),
---id_location		INT,
---id_number		INT,
+--id_number		VARCHAR(20),
 --CONSTRAINT foreign_key_people FOREIGN KEY (id_person) REFERENCES PhoneBook.dbo.People (id),
---CONSTRAINT foreign_key_numbers FOREIGN KEY (id_number) REFERENCES PhoneBook.dbo.Numbers (id)
+--CONSTRAINT foreign_key_numbers FOREIGN KEY (id_number) REFERENCES PhoneBook.dbo.Numbers (number)
 --);
 --GO
-
-

@@ -8,7 +8,9 @@ namespace ClassLibrary
 {
     public abstract class PhoneNumber
     {
-        
-        protected string Number;
+        public string Number { get; set; }
+        public abstract void GenerateNewNumber();
+        public abstract string RandomDigits(int length);
+       
     }
 }
